@@ -1,0 +1,62 @@
+<!doctype html>
+  <body>
+    <h1>AWS session impersonation assisstant</h1>
+    
+    <h2>Input </h2>
+    <textarea id="input"></textarea>
+    <button onclick="generateValues()">gen</button>
+    
+    <h2>Output</h2>
+    <h3>Raw</h3>
+    <textarea id="output-raw" readonly></textarea>
+    <button onclick="cpOutputRaw()">copy</button>
+    <H3>UNIX Environment</H3>
+    <textarea id="output-env" readonly></textarea>
+    <button onclick="cpOutputEnv()">copy</button>
+    <h3>~/.aws/credential</h3>
+    <textarea id="output-cred" readonly></textarea>
+    <button onclick="cpOutputCred()">copy</button>
+    <h3>aws_enum_services.py</h3>
+    <textarea id="output-enum" readonly></textarea>
+    <button onclick="cpOutputEnum()">copy</button>
+    
+    <script>
+        function generateValues() {
+            let v = document.getElementById("input").value;
+            let j = JSON.parse(v);
+            let accessKeyId     = j.AccessKeyId;
+            let secretAccessKey = j.SecretAccessKey;
+            let token           = j.Token;
+    
+            let outputRaw = [accessKeyId, secretAccessKey, token].join('\n');
+            document.getElementById("output-raw").value = outputRaw;
+    
+            let outputEnv = `export AWS_ACCESS_KEY_ID = ${accessKeyId}\nexport AWS_SECRET_ACCESS_KEY = ${secretAccessKey}\nexport AWS_ACCESS_TOKEN = ${token}`
+            document.getElementById("output-env").value = outputEnv;
+    
+            let outputCred = `aws_access_key_id = ${accessKeyId}\naws_secret_access_key = ${secretAccessKey}\naws_session_token = ${token}`
+            document.getElementById("output-cred").value = outputCred;
+    
+            let outputEnum = `aws_service_enum.py\\\n  --access-key=${accessKeyId}\\\n  --secret-key=${secretAccessKey}\\\n  --session-token=${token}`
+            document.getElementById("output-enum").value = outputEnum;
+        }
+    
+        function cpOutputRaw() {
+            let text = document.getElementById("output-raw").value;
+            navigator.clipboard.writeText(text);
+        }
+        function cpOutputEnv() {
+            let text = document.getElementById("output-env").value;
+            navigator.clipboard.writeText(text);
+        }
+        function cpOutputCred() {
+            let text = document.getElementById("output-cred").value;
+            navigator.clipboard.writeText(text);
+        }
+        function cpOutputEnum() {
+            let text = document.getElementById("output-enum").value;
+            navigator.clipboard.writeText(text);
+        }
+    </script>
+  </body>
+</html>
